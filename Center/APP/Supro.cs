@@ -508,7 +508,6 @@ namespace Center.APP
         {
             foreach (var c in MANV)
             {
-                await page.Keyboard.PressAsync(c.ToString());
             }
             await Task.Delay(200);
             await page.Keyboard.PressAsync("Enter");
