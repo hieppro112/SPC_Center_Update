@@ -88,6 +88,11 @@ namespace Center.APP
         {
             try
             {
+                var navigationTask = page.WaitForNavigationAsync(new NavigationOptions
+                {
+                    WaitUntil = new[] { WaitUntilNavigation.Networkidle0 },
+                    Timeout = 30000
+                });
                 await Task.Delay(400);
                 await TypeMachinename(page, machinename);
                 await Task.Delay(400);
@@ -97,6 +102,7 @@ namespace Center.APP
                 // Nhấn login
                 await page.ClickAsync("#btnLogin");
                 await Task.Delay(300);
+                await navigationTask;
             }
             catch { }
 
@@ -517,7 +523,7 @@ namespace Center.APP
             {
                 await page.Keyboard.PressAsync(c.ToString());
             }
-            System.Threading.Thread.Sleep(300);
+            await Task.Delay(200);
             await page.Keyboard.PressAsync("Enter");
         }
 
@@ -777,10 +783,7 @@ namespace Center.APP
                 //await page.EvaluateExpressionAsync("window.location.href = 'http://10.4.24.117:8441/Login.aspx';");
                 //await page.WaitForNavigationAsync();
 
-                await page.Client.SendAsync("Page.navigate", new
-                {
-                    url = "http://10.4.24.117:8441/Login.aspx"
-                });
+                await NavigateAndWaitAsync("http://10.4.24.117:8441/Login.aspx");
 
                 await page.BringToFrontAsync();
                 await SetupPage(GlobalVariables.browser);
@@ -796,10 +799,7 @@ namespace Center.APP
                 //await page.EvaluateExpressionAsync("window.location.href = 'http://10.4.24.117:8441/Login.aspx';");
                 //await page.WaitForNavigationAsync();
 
-                await page.Client.SendAsync("Page.navigate", new
-                {
-                    url = "http://10.4.24.117:8441/Login.aspx"
-                });
+                await NavigateAndWaitAsync("http://10.4.24.117:8441/Login.aspx");
 
                 await SetupPage(GlobalVariables.browser);
             }
@@ -812,10 +812,7 @@ namespace Center.APP
                 //await page.EvaluateExpressionAsync("window.location.href = 'http://10.4.24.117:8441/Login.aspx';");
                 //await page.WaitForNavigationAsync();
 
-                await page.Client.SendAsync("Page.navigate", new
-                {
-                    url = "http://10.4.24.117:8441/Login.aspx"
-                });
+                await NavigateAndWaitAsync("http://10.4.24.117:8441/Login.aspx");
 
                 await SetupPage(GlobalVariables.browser);
             }
@@ -829,7 +826,18 @@ namespace Center.APP
             }
             catch { }
         }
+        private async Task NavigateAndWaitAsync(string url)
+        {
+            var navigationTask = page.WaitForNavigationAsync(new NavigationOptions
+            {
+                WaitUntil = new[] { WaitUntilNavigation.Networkidle0 }, // hoặc Load / DOMContentLoaded tùy nhu cầu
+                Timeout = 30000
+            });
 
+            var navigateTask = page.Client.SendAsync("Page.navigate", new { url });
+
+            await Task.WhenAll(navigationTask, navigateTask);
+        }
         public async Task<int> getValidityCnt(IPage page)
         {
             try
