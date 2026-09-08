@@ -909,7 +909,7 @@ namespace Center
                     int Kcode_Index = -1;
 
                     // Ưu tiên checkedListBox
-                    if (checkedListBox.CheckedIndices.Count == 1)
+                    if (checkedListBox.CheckedIndices.Count >= 1)
                     {
                         int selected = checkedListBox.CheckedIndices[0];
                         Kcode_Index = listKcode[selected];
@@ -939,7 +939,7 @@ namespace Center
                     }
 
                     Debug.Print($"[StartKcode_Click] MANV={txt_MaNV.Text}, Kcode_Index={Kcode_Index}");
-                    bool result = await KCodeClick(page, 1, Kcode_Index, name, txt_MaNV.Text);
+                    bool result = await KCodeClick(page, 0, Kcode_Index, name, txt_MaNV.Text);
 
                     if (!result)
                     {
@@ -1753,6 +1753,7 @@ namespace Center
                 //    await WaitForElementAndClick(page, "#btnOther");
                 //    await Task.Delay(200);
                 //}
+
                 if (where == 1)
                 {
                     await WaitForElementAndClick(page, "#btnOther");
@@ -1760,7 +1761,7 @@ namespace Center
                 }
 
                 await WaitForElementAndClick(page, "#btnKcode");
-                await Task.Delay(700);
+                await Task.Delay(1500);
 
                 await page.TypeAsync("#lblDebug", MANV);
                 await Task.Delay(500);
