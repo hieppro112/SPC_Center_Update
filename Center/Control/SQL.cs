@@ -16,7 +16,7 @@ namespace Center
         private static string connection_manuafa { get; } = "Data Source=192.168.122.2;Initial Catalog=MANUFASPCPD;User ID=admin;Password=Buitanphat0201@";
         //private static string query_insert_user { get; } = "insert MANUFA_F2_Users values (@ins,@msnv,@po)";
         private static string query_insert_user { get; } = "IF EXISTS (SELECT 1 FROM [MANUFASPCPD].[dbo].[MANUFA_F2_Users] WHERE [nameMachine] = @machine)\r\nBEGIN\r\n    -- Nếu đã tồn tại Ins_Key -> Cập nhật MSNV và PO_Check\r\n    UPDATE [MANUFASPCPD].[dbo].[MANUFA_F2_Users]\r\n    SET [MSNV] = @msnv,\r\n        [PO_Check] = @po,\r\n\t\t[dateCreated] = GETDATE(),\r\n\t\t[Ins_Key] = @ins\r\n    WHERE [nameMachine] = @machine;\r\nEND\r\nELSE\r\nBEGIN\r\n    -- Nếu chưa tồn tại -> Thêm mới bản ghi\r\n    INSERT INTO [MANUFASPCPD].[dbo].[MANUFA_F2_Users] ([Ins_Key], [MSNV], [PO_Check], [dateCreated],[nameMachine])\r\n    VALUES (@ins, @msnv, @po,GETDATE(),@machine);\r\nEND";
-
+        private static string query_delete_wip { get; } = "delete top (1) FROM [MANUFASPCPD].[dbo].[MANUFA_F2_PO_WIP] where PO_Number = @id ";
 
         //string connect = "user id=SNKTR2K;password=SNKTR2K;" +
         //                           "data source=(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=192.168.0.9)" +
@@ -46,6 +46,29 @@ namespace Center
                 return false; // Trả về false nếu có lỗi xảy ra
             }
         }
+
+        public async Task<bool> DeleteWIP(string id)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connection_manuafa))
+                {
+                    await connection.OpenAsync();
+                    using (SqlCommand command = new SqlCommand(query_delete_wip, connection))
+                    {
+                        command.Parameters.AddWithValue("@id", id);
+                        int rowsAffected = await command.ExecuteNonQueryAsync();
+                        return rowsAffected > 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error Delete WIP: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false; // Trả về false nếu có lỗi xảy ra
+            }
+        }
+
         public void sqlDataAdapterFillDatatable(string sql, ref DataTable dt)
         {
             connection = new SqlConnection(conStringTraceSheetDb);
