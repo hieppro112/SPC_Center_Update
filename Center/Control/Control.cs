@@ -652,35 +652,7 @@ namespace Center
             txt_PO = new TextBox();
             txt_PO.Font = new Font(txt_PO.Font.FontFamily, 12);
             txt_PO.Dock = DockStyle.Fill;
-            //txt_PO.Text = "520003978430";
 
-            
-            //txt_PO.KeyDown += (sender, e) =>
-            //{
-            //    if (e.KeyCode == Keys.Enter)
-            //    {
-            //        if (txt_MaNV.Text == "" || (ctrl_Shift == true && cmb_Shift.SelectedIndex == -1))
-            //        {
-            //            MessageBox.Show("Vui long nhap day du thong tin");
-            //            return;
-            //        }
-            //        Run_Flow(opF);// Hàm chạy chính (Chạy 1 combo)
-            //    }
-            //};
-
-            //txt_PO.TextChanged += (sender, e) =>
-            //{
-            //    // Find KJapaneseG object in GlobalVariables.ListObj
-            //    var kJapaneseObj = GlobalVariables.ListObj.FirstOrDefault(obj => obj is KJapaneseG) as KJapaneseG;
-            //    if (kJapaneseObj != null)
-            //    {
-            //        int time_find = 0;
-            //        IntPtr h = kJapaneseObj.ShowStar();
-            //        // Update KJapaneseG with current MaNV and PO
-            //        kJapaneseObj.Fill_Star(txt_MaNV.Text, txt_PO.Text, h);
-            //        Debug.Print($"KJapaneseG updated with MaNV: {txt_MaNV.Text}, PO: {txt_PO.Text}");
-            //    }
-            //};
 
             txt_PO.KeyDown += async (sender, e) =>
             {
@@ -698,6 +670,11 @@ namespace Center
                     if (!checkIN)
                     {
                         MessageBox.Show("Loi khi them vao database user ");
+                    }
+                    bool DeleteID = await tf.DeleteWIP(txt_PO.Text);
+                    if (!checkIN)
+                    {
+                        MessageBox.Show("Xoa du lieu ra WIP thanh cong ");
                     }
 
                     var kJapaneseObj = GlobalVariables.ListObj.FirstOrDefault(obj => obj is KJapaneseG) as KJapaneseG;
