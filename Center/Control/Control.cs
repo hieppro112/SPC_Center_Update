@@ -672,9 +672,9 @@ namespace Center
                         MessageBox.Show("Loi khi them vao database user ");
                     }
                     bool DeleteID = await tf.DeleteWIP(txt_PO.Text);
-                    if (!checkIN)
+                    if (!DeleteID)
                     {
-                        MessageBox.Show("Xoa du lieu ra WIP thanh cong ");
+                        MessageBox.Show("Xoa du lieu ra WIP thất bại");
                     }
 
                     var kJapaneseObj = GlobalVariables.ListObj.FirstOrDefault(obj => obj is KJapaneseG) as KJapaneseG;
